@@ -1,0 +1,52 @@
+name: Terraform Validation
+
+on:
+  push:
+    branches:
+      - develop
+      - staging
+
+jobs:
+  terraform:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up Terraform
+      uses: hashicorp/setup-terraform@v1
+      with:
+        terraform_version: '1.3.0'
+
+    - name: Set environment variable based on branch
+      run: |
+        if [[ "${GITHUB_REF}" == "refs/heads/main" ]]; then
+          echo "environment=prd" >> $GITHUB_ENV
+        elif [[ "${GITHUB_REF}" == "refs/heads/staging" ]]; then
+          echo "environment=stg" >> $GITHUB_ENV
+        else
+          echo "environment=dev" >> $GITHUB_ENV
+        fi
+
+    - name: Terraform Init
+      run: terraform init"
+      working-directory: terraform/environments/${{ env.environment }}
+
+    - name: Terraform Validate
+      run: terraform validate
+      working-directory: terraform/environments/${{ env.environment }}
+
+    - name: Terraform Lint
+      run: terraform fmt -check
+      working-directory: terraform/environments/${{ env.environment }}
+
+    - name: Terraform Test
+      run: terraform test
+      working-directory: terraform/environments/${{ env.environment }}
+
+    - name: Terraform Plan
+      run: terraform plan
+
+    - name: Terraform apply
+      run: terraform apply -auto-approve
