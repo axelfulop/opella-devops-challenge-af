@@ -70,3 +70,8 @@ variable "containers" {
     }
   ]
 }
+
+variable "dns_name_label" {
+  description = "The DNS name label for the container group"
+  type        = string
+}

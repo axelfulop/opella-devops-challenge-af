@@ -3,7 +3,8 @@ resource "azurerm_container_group" "container" {
   location            = var.location
   resource_group_name = var.resource_group_name
   tags                = var.tags
-
+  
+  dns_name_label = var.dns_name_label
   os_type = var.os_type
 
 image_registry_credential {

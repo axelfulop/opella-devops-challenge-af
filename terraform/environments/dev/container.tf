@@ -20,6 +20,7 @@ module "nginx_container" {
   admin_username      = azurerm_container_registry.nginx.admin_username
   admin_password      = azurerm_container_registry.nginx.admin_password
   expose_to_public    = true
+  dns_name_label      = "nginx-${var.environment}"
   tags = {
     environment = var.environment
     project     = "nginx-container"
